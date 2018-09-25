@@ -57,9 +57,24 @@ RUN curl -L https://www.getchef.com/chef/install.sh | bash \
 
 VOLUME ${NEXUS_DATA}
 
-EXPOSE 8081
+RUN cd /root \
+    && yum install -y which wget openssl sudo net-tools \
+    && wget http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/p/pwgen-2.08-1.el7.x86_64.rpm \
+    && rpm -Uvh pwgen-2.08-1.el7.x86_64.rpm
+
+
+RUN mkdir /install-scripts
+
+COPY gen_keystore.sh enable-ssl.sh /install-scripts/
+
+RUN chmod +x /install-scripts/gen_keystore.sh
+
+RUN /install-scripts/gen_keystore.sh
+
 USER nexus
 
 ENV INSTALL4J_ADD_VM_PARAMS="-Xms1200m -Xmx1200m -XX:MaxDirectMemorySize=2g -Djava.util.prefs.userRoot=${NEXUS_DATA}/javaprefs"
+
+EXPOSE 8081 8443
 
 CMD ["sh", "-c", "${SONATYPE_DIR}/start-nexus-repository-manager.sh"]
