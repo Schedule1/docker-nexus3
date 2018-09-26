@@ -1,9 +1,13 @@
 #!/bin/bash
 
-if [ -f "password" ]
+if [ -d "ssl" ]
 then
-    rm password
+    rm -fr ssl
 fi
+
+mkdir ssl
+
+cd ssl
 
 PW=`pwgen -Bs 10 1`
 echo ${PW} > password
@@ -18,13 +22,9 @@ keytool -importkeystore -srckeystore schedule1.jks -srcstorepass $PW -destkeysto
 
 keytool -list -keystore schedule1.p12 -storetype PKCS12 -storepass $PW
 
-#openssl pkcs12 -nokeys -in schedule1.p12 -out schedule1.pem
+openssl pkcs12 -nokeys -in schedule1.p12 -out schedule1.pem -password pass:$PW
 
-#openssl pkcs12 -nocerts -nodes -in schedule1.p12 -out schedule1.key
+openssl pkcs12 -nocerts -nodes -in schedule1.p12 -out schedule1.key -password pass:$PW
 
-cp schedule1.jks ${NEXUS_HOME}/etc/ssl/keystore.jks
-
-PATTERN=s/password/${PW}/g
-sed -i ${PATTERN} ${NEXUS_HOME}/etc/jetty/jetty-https.xml
-
+cd ..
 

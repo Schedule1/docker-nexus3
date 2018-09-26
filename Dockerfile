@@ -20,6 +20,7 @@ LABEL vendor=Sonatype \
       com.sonatype.license="Apache License, Version 2.0" \
       com.sonatype.name="Nexus Repository Manager base image"
 
+ARG KEYSTORE_PASSWORD
 ARG NEXUS_VERSION=3.13.0-01
 ARG NEXUS_DOWNLOAD_URL=https://download.sonatype.com/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz
 ARG NEXUS_DOWNLOAD_SHA256_HASH=5d1890f45e95e2ca74e62247be6b439482d2fe4562a7ec8ae905c4bdba6954ce
@@ -65,11 +66,12 @@ RUN cd /root \
 
 RUN mkdir /install-scripts
 
-COPY gen_keystore.sh enable-ssl.sh /install-scripts/
+COPY enable-ssl.sh /install-scripts/
 
-RUN chmod +x /install-scripts/gen_keystore.sh
+COPY ./ssl/schedule1.jks ${NEXUS_HOME}/etc/ssl/keystore.jks
 
-RUN /install-scripts/gen_keystore.sh
+RUN KEYSTORE_PASSWORD_PATTERN=s/password/${KEYSTORE_PASSWORD}/g \
+    && sed -i ${KEYSTORE_PASSWORD_PATTERN} ${NEXUS_HOME}/etc/jetty/jetty-https.xml
 
 USER nexus
 
