@@ -22,6 +22,22 @@ Quit the command line, restart the container
 
 Now the port ```8081``` is for the normal access, and the port ```8443``` is for the ssl access
 
+## import certificate into Java cacerts
+
+To publish artifacts through https endpoint, the certificate generated should be imported into the default Java keystore ```cacerts``` on which SBT is running
+
+Use the following command:
+
+```
+sudo keytool -import -alias schedule1 -file ssl/schedule1.pem -keystore /Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/security/cacerts -storepass changeit
+```
+
+To remove the ```schedule1``` nexus certificate, run the following command:
+
+```
+sudo keytool -delete -alias schedule1 -keystore /Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/security/cacerts -storepass changeit
+```  
+
 ## publish artifacts through https endpoint from SBT
 
 add the following expressions into the ```build.sbt``` file
