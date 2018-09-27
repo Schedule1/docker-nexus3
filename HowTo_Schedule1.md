@@ -54,3 +54,31 @@ user=admin
 password=admin123
 ```
 
+
+## set up sbt proxy repository
+
+Create a file ```repositories``` under the path ```~/.sbt/```
+
+Put the following lines to the file:
+
+```
+[repositories]
+  local
+  my-maven-proxy-releases: http://$host:8081/repository/maven-central/
+```
+
+If ivy can't find the libraries on local directory, the maven-central proxy will be used to retrieve the libraries. And the proxy also caches the downloaded libraries for the future usage.
+
+## set up maven repository
+
+Add the following lines to maven file 
+
+```
+    <repositories>
+        <repository>
+            <id>nexus-proxy</id>
+            <name>nexus-proxy</name>
+            <url>http://$host:8081/repository/maven-central</url>
+        </repository>
+    </repositories>
+```
