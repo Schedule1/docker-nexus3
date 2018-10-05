@@ -155,3 +155,18 @@ Disable the following plugin
           <version>???</version>
         </plugin>
 ```
+
+## Automatically trigger the build process
+
+* Enable ```Poll SCM``` and leave the ```Schedule``` field empty in the portion of ```Build Triggers``` of the job configuration
+* Create a script file named ```post-commit``` under the directory ```${repo_path}/.git/hooks```, and add the following to the file
+```bash
+#!/bin/sh
+curl http://${jenkins.server.ip | jenkins.server.dns}:8080/git/notifyCommit?url=${repo.url}&branches=${branch.name}
+```
+
+for example
+```bash
+curl http://18.236.39.235:8080/git/notifyCommit?url=https://github.com/grant-guo/mvn-scaffold&branches=repo
+
+```
