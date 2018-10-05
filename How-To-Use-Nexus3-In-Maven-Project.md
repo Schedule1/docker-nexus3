@@ -156,10 +156,11 @@ Disable the following plugin
         </plugin>
 ```
 
-## Automatically trigger the build process
+## Automatically trigger the build process in the non-github remote Git repository
 
 * Enable ```Poll SCM``` and leave the ```Schedule``` field empty in the portion of ```Build Triggers``` of the job configuration
-* Create a script file named ```post-commit``` under the directory ```${repo_path}/.git/hooks```, and add the following to the file
+* Create a hook file named ```post-commit``` under the directory ```${repo_path}/.git/hooks```, and add the following to the file
+* There is another hook named ```post-receive```, however it is located in the remote side
 ```bash
 #!/bin/sh
 curl http://${jenkins.server.ip | jenkins.server.dns}:8080/git/notifyCommit?url=${repo.url}&branches=${branch.name}
@@ -170,3 +171,14 @@ for example
 curl http://18.236.39.235:8080/git/notifyCommit?url=https://github.com/grant-guo/mvn-scaffold&branches=repo
 
 ```
+
+## Automatically trigger the build process for Github repository
+
+Create a ```Webhook``` from ```settings``` page of the Github repository. 
+
+Fill the ```Payload URL``` field with the URL like this ```http://${jenkins.server.ip | jenkins.server.dns}:8080/git/notifyCommit?url=${repo.url}&branches=${branch.name}```
+
+for example
+```bash
+http://18.236.39.235:8080/git/notifyCommit?url=https://github.com/grant-guo/mvn-scaffold&branches=repo
+``` 
