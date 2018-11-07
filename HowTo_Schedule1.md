@@ -82,3 +82,11 @@ Add the following lines to maven file
         </repository>
     </repositories>
 ```
+
+## Recover from the crash
+
+* restart the AWS instance if necessary
+* log in to the AWS instance
+* run the command ```sudo service docker start```
+* run the command ```sudo docker ps -a``` to find out the docker container ID for nexus service
+* with the ID, run the command ```sudo docker start ${ID}```
